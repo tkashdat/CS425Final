@@ -1,0 +1,159 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2708
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red249\green249\blue249;\red0\green0\blue0;
+\red249\green249\blue249;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0\c87059;\cssrgb\c98039\c98039\c98039;\cssrgb\c0\c0\c0\c87059;
+\cssrgb\c98039\c98039\c98039;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs28 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 CREATE TABLE Real_Estate_Office\
+(\
+  office_ph_num VARCHAR NOT NULL,\
+  officeID INT NOT NULL,\
+  PRIMARY KEY (officeID)\
+);\
+\
+CREATE TABLE Payments\
+(\
+  pmt_type VARCHAR NOT NULL,\
+  card_num INT NOT NULL,\
+  expiration VARCHAR NOT NULL,\
+  CCV INT NOT NULL,\
+  paymentID INT NOT NULL,\
+  PRIMARY KEY (paymentID),\
+  UNIQUE (card_num)\
+);\
+\
+CREATE TABLE Discount\
+(\
+  discount_amt NUMERIC(4,2) NOT NULL,\
+  discountID INT NOT NULL,\
+  PRIMARY KEY (discountID)\
+);\
+\
+CREATE TABLE Rewards\
+(\
+  points_balance INT NOT NULL,\
+  rewards_ID INT NOT NULL,\
+  PRIMARY KEY (rewards_ID)\
+);\
+\
+CREATE TABLE Neighborhood\
+(\
+  walkability_score INT NOT NULL,\
+  crime_rate NUMERIC(4,2) NOT NULL,\
+  school_rating CHAR(1) NOT NULL,\
+  neighborhoodID INT NOT NULL,\
+  PRIMARY KEY (neighborhoodID)\
+);\
+\
+CREATE TABLE Realtor\
+(\
+  commission NUMERIC(4,2) NOT NULL,\
+  realtorID INT NOT NULL,\
+  officeID INT NOT NULL,\
+  PRIMARY KEY (realtorID),\
+  FOREIGN KEY (officeID) REFERENCES Real_Estate_Office(officeID)\
+);\
+\
+CREATE TABLE Renter\
+(\
+  primary_pmt INT NOT NULL,\
+  secondary_pmt INT NOT NULL,\
+  SSN INT NOT NULL,\
+  renterID INT NOT NULL,\
+  rewards_ID INT NOT NULL,\
+  PRIMARY KEY (renterID),\
+  FOREIGN KEY (rewards_ID) REFERENCES Rewards(rewards_ID),\
+  UNIQUE (SSN)\
+);\
+\
+CREATE TABLE Property\
+(\
+  sq_ft INT NOT NULL,\
+  no_bedrooms INT NOT NULL,\
+  no_baths INT NOT NULL,\
+  pool CHAR(1) NOT NULL,\
+  property_type VARCHAR NOT NULL,\
+  description VARCHAR NOT NULL,\
+  monthly_rent NUMERIC(10,2) NOT NULL,\
+  rent_start_date DATE NOT NULL,\
+  rent_end_date DATE NOT NULL,\
+  propertyID INT NOT NULL,\
+  discountID INT NOT NULL,\
+  neighborhoodID INT NOT NULL,\
+  realtorID INT NOT NULL,\
+  PRIMARY KEY (propertyID),\
+  FOREIGN KEY (discountID) REFERENCES Discount(discountID),\
+  FOREIGN KEY (neighborhoodID) REFERENCES Neighborhood(neighborhoodID),\
+  FOREIGN KEY (realtorID) REFERENCES Realtor(realtorID)\
+);\
+\
+CREATE TABLE rents\
+(\
+  renterID INT NOT NULL,\
+  propertyID INT NOT NULL,\
+  PRIMARY KEY (renterID, propertyID),\
+  FOREIGN KEY (renterID) REFERENCES Renter(renterID),\
+  FOREIGN KEY (propertyID) REFERENCES Property(propertyID)\
+);\
+\
+CREATE TABLE has\
+(\
+  renterID INT NOT NULL,\
+  paymentID INT NOT NULL,\
+  PRIMARY KEY (renterID, paymentID),\
+  FOREIGN KEY (renterID) REFERENCES Renter(renterID),\
+  FOREIGN KEY (paymentID) REFERENCES Payments(paymentID)\
+);\
+\
+CREATE TABLE Address\
+(\
+  st_address VARCHAR NOT NULL,\
+  city VARCHAR NOT NULL,\
+  state CHAR(2) NOT NULL,\
+  zipcode VARCHAR NOT NULL,\
+  addressID INT NOT NULL,\
+  officeID INT NOT NULL,\
+  propertyID INT NOT NULL,\
+  PRIMARY KEY (addressID),\
+  FOREIGN KEY (officeID) REFERENCES Real_Estate_Office(officeID),\
+  FOREIGN KEY (propertyID) REFERENCES Property(propertyID),\
+  UNIQUE (st_address)\
+);\
+\
+CREATE TABLE Transactions\
+(\
+  total NUMERIC(10,2) NOT NULL,\
+  discount_amt \cf4 \cb5 \outl0\strokewidth0 NUMERIC(10,2)\cf2 \cb3 \outl0\strokewidth0 \strokec2  NOT NULL,\
+  approv_code VARCHAR NOT NULL,\
+  pmt_amt \cf4 \cb5 \outl0\strokewidth0 NUMERIC(10,2)\cf2 \cb3 \outl0\strokewidth0 \strokec2  NOT NULL,\
+  transactionID INT NOT NULL,\
+  paymentID INT NOT NULL,\
+  discountID INT NOT NULL,\
+  propertyID INT NOT NULL,\
+  PRIMARY KEY (transactionID),\
+  FOREIGN KEY (paymentID) REFERENCES Payments(paymentID),\
+  FOREIGN KEY (discountID) REFERENCES Discount(discountID),\
+  FOREIGN KEY (propertyID) REFERENCES Property(propertyID),\
+  UNIQUE (approv_code)\
+);\
+\
+CREATE TABLE Users\
+(\
+  fname VATCHAR NOT NULL,\
+  lname VARCHAR NOT NULL,\
+  role CHAR(3) NOT NULL,\
+  ph_number VARCHAR NOT NULL,\
+  user_ID INT NOT NULL,\
+  renterID INT NOT NULL,\
+  addressID INT NOT NULL,\
+  realtorID INT NOT NULL,\
+  PRIMARY KEY (user_ID),\
+  FOREIGN KEY (renterID) REFERENCES Renter(renterID),\
+  FOREIGN KEY (addressID) REFERENCES Address(addressID),\
+  FOREIGN KEY (realtorID) REFERENCES Realtor(realtorID)\
+);}
