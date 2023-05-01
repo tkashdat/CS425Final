@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from booking.models import Users, Discount
 from django.core.serializers import serialize
+from http import HTTPStatus
+from django.http import HttpResponse
 import json
 
 # Create your views here.
@@ -32,11 +34,14 @@ def booking(request):
 #     })
 
 def test(request):
-    user = Discount.objects.all()
+    user = Users.objects.all()
     # return JsonResponse({'user': user})
     # return JsonResponse('{ "user": "apes" }', '', 0)
     
     # return print(user.__dict__)
     serialized_data = serialize("json", user)
     serialized_data = json.loads(serialized_data)
-    return JsonResponse(serialized_data, safe=False)
+    data = JsonResponse(serialized_data, safe=False)
+    return HttpResponse(
+        data
+    )
